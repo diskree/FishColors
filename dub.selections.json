@@ -1,0 +1,10 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"arsd-official": "9.3.1",
+		"derelict-gl3": "1.0.24",
+		"derelict-util": "2.1.0",
+		"imaged": "1.0.2",
+		"undead": "1.0.10"
+	}
+}

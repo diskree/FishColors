@@ -1,0 +1,12 @@
+{
+	"name": "fish-gen",
+	"authors": [
+		"Emily"
+	],
+	"dependencies": {
+		"imaged": "~>1.0.2"
+	},
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2021, Emily",
+	"license": "proprietary"
+}

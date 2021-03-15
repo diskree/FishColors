@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+fish-gen.so
+fish-gen.dylib
+fish-gen.dll
+fish-gen.a
+fish-gen.lib
+fish-gen-test-*
+*.exe
+*.o
+*.obj
+*.lst
+out/
