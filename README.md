@@ -1,5 +1,7 @@
 # Fish Colors
-Fish Colors is a [Chime](https://github.com/emilyalexandra/chime) resource pack that makes tropical fish buckets display the colors of the fish inside the bucket. This program generates that resource pack, given a simple image of the original tropical fish bucket, with the varying section grayscaled and designated with slight opacity changes.
+It is fork of https://github.com/emilyploszaj/fish-colors with little changes:
+- Buckets for 22 main tropical fish only. There is a problem with the same textures for several fish, as they have the same coloration, but different patterns. I don't know how to solve it :(
+- Migrate from Chime to Optifine/CIT Resewn
 
 ## Building
 * Build with dub.
