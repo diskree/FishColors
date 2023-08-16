@@ -30,30 +30,33 @@ const Pixel[] COLORS = [
 
 void main()
 {
-    IMGError err;
-    Image patternImg = load("in/fish.png", err);
-
     string path = "out/assets/minecraft/optifine/cit/fishcolors";
     mkdirRecurse(path);
 
     std.file.write("out/pack.mcmeta", import("pack.mcmeta"));
 
+    IMGError err;
+    Image patternTexture;
+
     int[] tags = [
-        459008, 50660352, 50726144, 67108865, 67371009, 16778497, 67764993, 918273, 917504, 918529, 67699456, 117441025, 117441793, 117506305, 118161664, 101253888, 185008129, 234882305, 235340288, 67110144, 117899265, 
-        65536
+        459008, 50660352, 50726144, 67108865, 67371009, 16778497, 67764993, 918273,
+        917504, 918529, 67699456, 117441025, 117441793, 117506305, 118161664,
+        101253888, 185008129, 234882305, 235340288, 67110144, 117899265
     ];
     foreach (tag; tags)
     {
         uint pattern = (tag >> 8) & 0xFF;
-        uint primary = (tag >> 16) & 0xFF;
-        uint secondary = (tag >> 24) & 0xFF;
+        uint baseColor = (tag >> 16) & 0xFF;
+        uint patternColor = (tag >> 24) & 0xFF;
 
-        writeColoredImage(patternImg, path ~ format("/%s.png", tag), COLORS[primary], COLORS[secondary]);
+        patternTexture = load("pattern/%d.png".format(pattern), err);
+
+        writeColoredImage(patternTexture, path ~ format("/%s.png", tag), COLORS[baseColor], COLORS[patternColor]);
         std.file.write(path ~ format("/%s.properties", tag), import("stubModel.properties").format(tag, tag));
     }
 }
 
-void writeColoredImage(Image base, string outFile, Pixel primary, Pixel secondary)
+void writeColoredImage(Image base, string outFile, Pixel baseColor, Pixel patternColor)
 {
     Image o = new Img!(Px.R8G8B8A8)(base.width, base.height);
     for (int x = 0; x < base.width; x++)
@@ -64,11 +67,11 @@ void writeColoredImage(Image base, string outFile, Pixel primary, Pixel secondar
             // These are completely arbitrary I just used the eraser tool on low opacity and checked
             if (p.a == 250)
             {
-                p = p.colorize(primary, secondary);
+                p = p.colorize(baseColor, patternColor);
             }
             else if (p.a == 242)
             {
-                p = p.colorize(secondary, primary);
+                p = p.colorize(patternColor, baseColor);
             }
             o.setPixel(x, y, p);
         }
@@ -76,17 +79,17 @@ void writeColoredImage(Image base, string outFile, Pixel primary, Pixel secondar
     o.write(outFile);
 }
 
-Pixel colorize(Pixel base, Pixel color, Pixel whiteColor)
+Pixel colorize(Pixel base, Pixel color, Pixel inverse)
 {
     Hsl bh = base.toHsl();
     Hsl ch = color.toHsl();
-    Hsl wh = whiteColor.toHsl();
+    Hsl ih = inverse.toHsl();
     if (color == WHITE_COLOR)
     {
         float mixFactor = bh.l * bh.l;
-        ch.h = wh.h;
-        ch.s = wh.s;
-        ch.l = mixFactor * wh.l + (1.0 - mixFactor) * 1.0;
+        ch.h = ih.h;
+        ch.s = ih.s;
+        ch.l = mixFactor * ih.l + (1.0 - mixFactor) * 1.0;
     }
     else
     {
