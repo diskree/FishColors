@@ -7,8 +7,10 @@ import std.json;
 import std.stdio;
 import std.string;
 
+const Pixel WHITE_COLOR = Pixel(208, 214, 215);
+
 const Pixel[] COLORS = [
-    Pixel(208, 214, 215), // White
+    WHITE_COLOR, // White
     Pixel(226, 98, 0), // Orange
     Pixel(168, 43, 158), // Magenta
     Pixel(30, 138, 200), // Light Blue
@@ -37,10 +39,8 @@ void main()
     std.file.write("out/pack.mcmeta", import("pack.mcmeta"));
 
     int[] tags = [
-        459008, 50660352, 50726144, 67108865, 67371009, 16778497, 67764993,
-        918273, 917504, 918529, 67699456, 117441025, 117441793, 117506305,
-        118161664, 101253888, 185008129, 234882305, 235340288, 67110144,
-        117899265, 65536
+        459008, 50660352, 50726144, 67108865, 67371009, 16778497, 67764993, 918273, 917504, 918529, 67699456, 117441025, 117441793, 117506305, 118161664, 101253888, 185008129, 234882305, 235340288, 67110144, 117899265, 
+        65536
     ];
     foreach (tag; tags)
     {
@@ -62,13 +62,13 @@ void writeColoredImage(Image base, string outFile, Pixel primary, Pixel secondar
         {
             Pixel p = base.getPixel(x, y);
             // These are completely arbitrary I just used the eraser tool on low opacity and checked
-            if (p.a == 249)
+            if (p.a == 250)
             {
-                p = p.colorize(primary);
+                p = p.colorize(primary, secondary);
             }
-            else if (p.a == 243)
+            else if (p.a == 242)
             {
-                p = p.colorize(secondary);
+                p = p.colorize(secondary, primary);
             }
             o.setPixel(x, y, p);
         }
@@ -76,12 +76,22 @@ void writeColoredImage(Image base, string outFile, Pixel primary, Pixel secondar
     o.write(outFile);
 }
 
-Pixel colorize(Pixel base, Pixel color)
+Pixel colorize(Pixel base, Pixel color, Pixel whiteColor)
 {
     Hsl bh = base.toHsl();
     Hsl ch = color.toHsl();
-    // Modifying how lightness is picked could likely provide better textures
-    ch.l = (ch.l + bh.l) / 2;
+    Hsl wh = whiteColor.toHsl();
+    if (color == WHITE_COLOR)
+    {
+        float mixFactor = bh.l * bh.l;
+        ch.h = wh.h;
+        ch.s = wh.s;
+        ch.l = mixFactor * wh.l + (1.0 - mixFactor) * 1.0;
+    }
+    else
+    {
+        ch.l = bh.l;
+    }
     return ch.toRgb();
 }
 
